@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Break Tracker</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            text-align: left;
+        }
+
+        textarea, input, select {
+            width: 100%;
+        }
+
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .yellow-highlight {
+            background-color: #fff3cd;
+        }
+
+        .pink-highlight {
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <h2>Employee Break Time Tracker</h2>
+    <form id="breakForm" action="https://formspree.io/f/mdkkjgrr" method="POST">
+        <table>
+            <tr>
+                <th>Field</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td>Employee Name</td>
+                <td>
+                    <select id="employeeName" name="employeeName" onchange="showOtherField()" required>
+                        <option value="" disabled selected>Select Employee</option>
+                        <option value="Patrick Noel">Patrick Noel</option>
+                        <option value="Pierre Clerveaux">Pierre Clerveaux</option>
+                        <option value="Nigel Mccantis">Nigel Mccantis</option>
+                        <option value="Helen Mars">Helen Mars</option>
+                        <option value="Ana Huezo">Ana Huezo</option>
+                        <option value="Pablum">Pablum</option>
+                        <option value="Ralph Morris">Ralph Morris</option>
+                        <option value="Zamor Raymond">Zamor Raymond</option>
+                        <option value="Frans Funga">Frans Funga</option>
+                        <option value="Georgina Ramirez">Georgina Ramirez</option>
+                        <option value="Synthiche">Synthiche</option>
+                        <option value="Jean Kodia">Jean Kodia</option>
+                        <option value="Christina">Christina</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="text" id="newEmployee" name="newEmployee" placeholder="Enter New Employee Name" style="display:none;">
+                </td>
+            </tr>
+            <tr>
+                <td>Type of Break</td>
+                <td>
+                    <select id="breakType" name="breakType" required>
+                        <option value="" disabled selected>Select Break Type</option>
+                        <option value="Lunch Break (30 minutes)">Lunch Break (30 minutes)</option>
+                        <option value="Bathroom Break (15 minutes)">Bathroom Break (15 minutes)</option>
+                        <option value="Exceptional Break">Exceptional Break</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Break Start (Time In)</td>
+                <td><input type="text" id="timeIn" name="timeIn" onclick="captureTimeIn()" readonly></td>
+            </tr>
+            <tr>
+                <td>Break End (Time Out)</td>
+                <td><input type="text" id="timeOut" name="timeOut" onclick="captureTimeOut()" readonly></td>
+            </tr>
+            <tr>
+                <td>Total Break Time</td>
+                <td><input type="text" id="totalTime" name="totalTime" readonly></td>
+            </tr>
+            <tr>
+                <td>Comments</td>
+                <td><textarea id="comments" name="comments" rows="3" placeholder="Optional: Add comments here"></textarea></td>
+            </tr>
+        </table>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        let timeIn, timeOut;
+
+        // Show input field if "Other" is selected
+        function showOtherField() {
+            const employeeSelect = document.getElementById('employeeName');
+            const otherField = document.getElementById('newEmployee');
+            if (employeeSelect.value === 'Other') {
+                otherField.style.display = 'block';
+                otherField.required = true;
+            } else {
+                otherField.style.display = 'none';
+                otherField.required = false;
+            }
+        }
+
+        // Capture the current time for Break Start
+        function captureTimeIn() {
+            const now = new Date();
+            timeIn = now;
+            document.getElementById('timeIn').value = now.toLocaleTimeString();
+        }
+
+        // Capture the current time for Break End and calculate total time
+        function captureTimeOut() {
+            const now = new Date();
+            timeOut = now;
+            document.getElementById('timeOut').value = now.toLocaleTimeString();
+
+            if (timeIn) {
+                const diff = timeOut - timeIn; // Difference in milliseconds
+                const totalMinutes = Math.floor(diff / 60000);
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+                const totalBreakTime = `${hours}h ${minutes}m`;
+
+                document.getElementById('totalTime').value = totalBreakTime;
+
+                // Highlight based on time difference
+                const expectedTime = document.getElementById('breakType').value.includes('30') ? 30 : 15;
+                const timeDifference = totalMinutes - expectedTime;
+
+                const totalTimeField = document.getElementById('totalTime');
+                totalTimeField.classList.remove('yellow-highlight', 'pink-highlight');
+
+                if (timeDifference > 10) {
+                    totalTimeField.classList.add('pink-highlight');
+                } else if (timeDifference > 0) {
+                    totalTimeField.classList.add('yellow-highlight');
+                }
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('breakForm').onsubmit = function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            alert('Form submitted! Details:\n' + JSON.stringify(data, null, 2));
+        };
+    </script>
+</body>
+</html>
