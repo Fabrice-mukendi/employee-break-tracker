@@ -163,15 +163,17 @@
             day: 'numeric' 
         })}`;
 
-        // Automatically fill the time when clicked and calculate total time
+        // Automatically fill the time only on the first click
         function captureTime(fieldId) {
             const field = document.getElementById(fieldId);
-            const now = new Date();
-            field.value = now.toLocaleTimeString(); // Auto-fill current time
-            calculateTotalTime();
+            if (!field.value) {
+                const now = new Date();
+                field.value = now.toLocaleTimeString(); // Auto-fill current time
+                calculateTotalTime();
+            }
         }
 
-        // Calculate total break time and update notes
+        // Calculate total break time and generate notes
         function calculateTotalTime() {
             const timeInValue = document.getElementById('timeIn').value;
             const timeOutValue = document.getElementById('timeOut').value;
@@ -187,12 +189,12 @@
 
                     document.getElementById('totalTime').value = `${hours}h ${minutes}m`;
 
-                    // Generate a fun note
+                    // Generate a fun and beautiful note
                     const notesField = document.getElementById('notes');
                     if (diffMinutes <= 30) {
-                        notesField.value = `Great job! You took a well-deserved break of ${hours} hours and ${minutes} minutes. You're setting an example!`;
+                        notesField.value = `Fantastic! Your break lasted ${hours}h ${minutes}m. You're setting the gold standard for break discipline!`;
                     } else {
-                        notesField.value = `Oops! Your break lasted ${hours} hours and ${minutes} minutes. Remember, breaks should be refreshing but timely!`;
+                        notesField.value = `Uh-oh! Your break was ${hours}h ${minutes}m. Let's not turn breaks into vacations! Back to productivity!`;
                     }
                 }
             }
