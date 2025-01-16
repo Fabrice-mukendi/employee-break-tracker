@@ -41,7 +41,7 @@
             background-color: #fff3cd;
         }
 
-        .pink-highlight {
+        .red-highlight {
             background-color: #f8d7da;
         }
     </style>
@@ -162,10 +162,10 @@
                 const timeDifference = totalMinutes - expectedTime;
 
                 const totalTimeField = document.getElementById('totalTime');
-                totalTimeField.classList.remove('yellow-highlight', 'pink-highlight');
+                totalTimeField.classList.remove('yellow-highlight', 'red-highlight');
 
                 if (timeDifference > 10) {
-                    totalTimeField.classList.add('pink-highlight');
+                    totalTimeField.classList.add('red-highlight');
                 } else if (timeDifference > 0) {
                     totalTimeField.classList.add('yellow-highlight');
                 }
@@ -187,6 +187,4 @@
             const data = Object.fromEntries(formData.entries());
             alert('Form submitted! Details:\n' + JSON.stringify(data, null, 2));
         };
-    </script>
-</body>
-</html>
+    </script
