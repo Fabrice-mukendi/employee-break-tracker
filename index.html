@@ -38,11 +38,15 @@
         }
 
         .yellow-highlight {
-            background-color: #fff3cd; /* Light yellow */
+            background-color: #ffc107; /* Strong yellow */
+            font-weight: bold;
+            color: black;
         }
 
         .red-highlight {
-            background-color: #f8d7da; /* Light red */
+            background-color: #dc3545; /* Strong red */
+            font-weight: bold;
+            color: white;
         }
     </style>
 </head>
@@ -101,8 +105,8 @@
                 <td><input type="text" id="totalTime" name="totalTime" readonly></td>
             </tr>
             <tr>
-                <td>Comments</td>
-                <td><textarea id="comments" name="comments" rows="3" placeholder="Optional: Add comments here"></textarea></td>
+                <td>Notes</td>
+                <td><textarea id="notes" name="notes" rows="3" placeholder="Notes will be generated here automatically"></textarea></td>
             </tr>
         </table>
         <br>
@@ -162,12 +166,18 @@
                 const timeDifference = totalMinutes - expectedTime;
 
                 const totalTimeField = document.getElementById('totalTime');
+                const notesField = document.getElementById('notes');
+
+                // Reset styling and notes
                 totalTimeField.classList.remove('yellow-highlight', 'red-highlight');
+                notesField.value = "";
 
                 if (timeDifference > 10) {
                     totalTimeField.classList.add('red-highlight');
+                    notesField.value = `Exceeded allowed time by ${timeDifference} minutes.`;
                 } else if (timeDifference > 0) {
                     totalTimeField.classList.add('yellow-highlight');
+                    notesField.value = `Break exceeded allowed time but within 10 minutes.`;
                 }
             }
         }
