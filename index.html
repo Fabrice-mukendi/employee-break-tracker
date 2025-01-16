@@ -38,11 +38,11 @@
         }
 
         .yellow-highlight {
-            background-color: #fff3cd;
+            background-color: #fff3cd; /* Light yellow */
         }
 
         .red-highlight {
-            background-color: #f8d7da;
+            background-color: #f8d7da; /* Light red */
         }
     </style>
 </head>
@@ -182,9 +182,8 @@
 
         // Handle form submission
         document.getElementById('breakForm').onsubmit = function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            alert('Form submitted! Details:\n' + JSON.stringify(data, null, 2));
+            alert("Form submitted!");
         };
-    </script
+    </script>
+</body>
+</html>
