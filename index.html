@@ -151,15 +151,19 @@
             </tr>
             <tr>
                 <td>Break Start (Time In)</td>
-                <td><input type="time" id="timeIn" name="timeIn" onchange="calculateTotalTime()"></td>
+                <td><input type="time" id="timeIn" name="timeIn" onclick="captureTime(this)" onchange="calculateTotalTime()"></td>
             </tr>
             <tr>
                 <td>Break End (Time Out)</td>
-                <td><input type="time" id="timeOut" name="timeOut" onchange="calculateTotalTime()"></td>
+                <td><input type="time" id="timeOut" name="timeOut" onclick="captureTime(this)" onchange="calculateTotalTime()"></td>
             </tr>
             <tr>
                 <td>Total Break Time</td>
                 <td><input type="text" id="totalTime" name="totalTime" readonly></td>
+            </tr>
+            <tr>
+                <td>Notes</td>
+                <td><textarea id="notes" name="notes" readonly></textarea></td>
             </tr>
         </table>
         <br>
@@ -175,12 +179,24 @@
             day: 'numeric' 
         })}`;
 
-        // Automatically calculate the total break time and highlight the result
+        // Automatically fill the time on first click
+        function captureTime(field) {
+            if (!field.value) {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                field.value = `${hours}:${minutes}`; // Auto-fill current time
+                calculateTotalTime();
+            }
+        }
+
+        // Calculate total break time and highlight the result
         function calculateTotalTime() {
             const timeInValue = document.getElementById('timeIn').value;
             const timeOutValue = document.getElementById('timeOut').value;
             const breakType = document.getElementById('breakType');
             const totalTimeField = document.getElementById('totalTime');
+            const notesField = document.getElementById('notes');
 
             // Reset field style
             totalTimeField.classList.remove('green-highlight', 'yellow-highlight', 'red-highlight');
@@ -197,14 +213,18 @@
 
                     // Apply color coding based on allowed time
                     if (diffMinutes <= allowedTime) {
-                        totalTimeField.classList.add('green-highlight'); // Within allowed time
+                        totalTimeField.classList.add('green-highlight');
+                        notesField.value = `Great job! Your break lasted ${diffMinutes} minutes. Perfect timing!`;
                     } else if (diffMinutes <= allowedTime + 10) {
-                        totalTimeField.classList.add('yellow-highlight'); // Exceeds allowed time by <10 minutes
+                        totalTimeField.classList.add('yellow-highlight');
+                        notesField.value = `Good effort! Your break was ${diffMinutes} minutes. A little longer than expected.`;
                     } else {
-                        totalTimeField.classList.add('red-highlight'); // Exceeds allowed time by >=10 minutes
+                        totalTimeField.classList.add('red-highlight');
+                        notesField.value = `Oops! Your break lasted ${diffMinutes} minutes. Time to stay on track!`;
                     }
                 } else {
                     totalTimeField.value = "Invalid Time Range";
+                    notesField.value = "";
                 }
             }
         }
