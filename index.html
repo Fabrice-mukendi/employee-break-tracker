@@ -48,6 +48,12 @@
             font-weight: bold;
             color: white;
         }
+
+        .green-highlight {
+            background-color: #28a745; /* Strong green */
+            font-weight: bold;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -169,15 +175,18 @@
                 const notesField = document.getElementById('notes');
 
                 // Reset styling and notes
-                totalTimeField.classList.remove('yellow-highlight', 'red-highlight');
+                totalTimeField.classList.remove('yellow-highlight', 'red-highlight', 'green-highlight');
                 notesField.value = "";
 
                 if (timeDifference > 10) {
                     totalTimeField.classList.add('red-highlight');
-                    notesField.value = `Exceeded allowed time by ${timeDifference} minutes. Total break was ${totalMinutes} minutes.`;
+                    notesField.value = `Oops! You took a well-deserved break, but you exceeded by ${timeDifference} minutes! Total break time was ${totalMinutes} minutes. Let's get back to work!`;
                 } else if (timeDifference > 0) {
                     totalTimeField.classList.add('yellow-highlight');
-                    notesField.value = `Break exceeded allowed time but within 10 minutes (exceeded by ${timeDifference} minutes). Total break was ${totalMinutes} minutes.`;
+                    notesField.value = `Break exceeded allowed time but within 10 minutes (exceeded by ${timeDifference} minutes). Total break was ${totalMinutes} minutes. Good effort!`;
+                } else {
+                    totalTimeField.classList.add('green-highlight');
+                    notesField.value = `Great job! You respected the break time of ${expectedTime} minutes. Keep up the discipline!`;
                 }
             }
         }
