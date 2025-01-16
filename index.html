@@ -90,11 +90,11 @@
             </tr>
             <tr>
                 <td>Break Start (Time In)</td>
-                <td><input type="text" id="timeIn" name="timeIn" onclick="captureTimeIn()" readonly></td>
+                <td><input type="text" id="timeIn" name="timeIn" onclick="captureTimeIn()" placeholder="Click to auto-fill or manually enter time"></td>
             </tr>
             <tr>
                 <td>Break End (Time Out)</td>
-                <td><input type="text" id="timeOut" name="timeOut" onclick="captureTimeOut()" readonly></td>
+                <td><input type="text" id="timeOut" name="timeOut" onclick="captureTimeOut()" placeholder="Click to auto-fill or manually enter time"></td>
             </tr>
             <tr>
                 <td>Total Break Time</td>
@@ -127,16 +127,26 @@
 
         // Capture the current time for Break Start
         function captureTimeIn() {
-            const now = new Date();
-            timeIn = now;
-            document.getElementById('timeIn').value = now.toLocaleTimeString();
+            const timeInField = document.getElementById('timeIn');
+            if (!timeInField.value) {
+                const now = new Date();
+                timeIn = now;
+                timeInField.value = now.toLocaleTimeString();
+            } else {
+                timeIn = parseManualTime(timeInField.value);
+            }
         }
 
-        // Capture the current time for Break End and calculate total time
+        // Capture or manually enter Break End and calculate total time
         function captureTimeOut() {
-            const now = new Date();
-            timeOut = now;
-            document.getElementById('timeOut').value = now.toLocaleTimeString();
+            const timeOutField = document.getElementById('timeOut');
+            if (!timeOutField.value) {
+                const now = new Date();
+                timeOut = now;
+                timeOutField.value = now.toLocaleTimeString();
+            } else {
+                timeOut = parseManualTime(timeOutField.value);
+            }
 
             if (timeIn) {
                 const diff = timeOut - timeIn; // Difference in milliseconds
@@ -160,6 +170,14 @@
                     totalTimeField.classList.add('yellow-highlight');
                 }
             }
+        }
+
+        // Parse manually entered time (HH:MM format)
+        function parseManualTime(inputTime) {
+            const [hours, minutes] = inputTime.split(':').map(Number);
+            const now = new Date();
+            now.setHours(hours, minutes, 0, 0);
+            return now;
         }
 
         // Handle form submission
