@@ -88,10 +88,9 @@
 </head>
 <body>
     <header>
-        <!-- Logo placement -->
         <img src="pilgrims_logo_transparent.png" alt="Pilgrim's Poultry Logo">
         <h1>Employee Break Tracker</h1>
-        <p id="date"></p> <!-- Placeholder for the dynamic date -->
+        <p id="date"></p>
     </header>
 
     <form id="breakForm" action="https://formspree.io/f/mdkkjgrr" method="POST">
@@ -136,11 +135,11 @@
             </tr>
             <tr>
                 <td>Break Start (Time In)</td>
-                <td><input type="text" id="timeIn" name="timeIn" onclick="captureTimeIn()" placeholder="Click to auto-fill or manually enter time"></td>
+                <td><input type="text" id="timeIn" name="timeIn" onclick="captureTime('timeIn')" placeholder="Click to auto-fill or manually enter time"></td>
             </tr>
             <tr>
                 <td>Break End (Time Out)</td>
-                <td><input type="text" id="timeOut" name="timeOut" onclick="captureTimeOut()" placeholder="Click to auto-fill or manually enter time"></td>
+                <td><input type="text" id="timeOut" name="timeOut" onclick="captureTime('timeOut')" placeholder="Click to auto-fill or manually enter time"></td>
             </tr>
             <tr>
                 <td>Total Break Time</td>
@@ -156,7 +155,7 @@
     </form>
 
     <script>
-        // Show dynamic date
+        // Show the current date
         document.getElementById('date').textContent = `Today's Date: ${new Date().toLocaleDateString('en-US', { 
             weekday: 'long', 
             year: 'numeric', 
@@ -164,7 +163,7 @@
             day: 'numeric' 
         })}`;
 
-        // Show input field if "Other" is selected
+        // Show the "Other" input field if selected
         function showOtherField() {
             const employeeSelect = document.getElementById('employeeName');
             const otherField = document.getElementById('newEmployee');
@@ -177,9 +176,39 @@
             }
         }
 
-        // Placeholder functions for time capturing
-        function captureTimeIn() { /* ... */ }
-        function captureTimeOut() { /* ... */ }
+        // Automatically fill in time and reset old values
+        function captureTime(fieldId) {
+            const field = document.getElementById(fieldId);
+            const now = new Date();
+            field.value = now.toLocaleTimeString(); // Always overwrite with the new current time
+            calculateTotalTime(); // Update the total break time
+        }
+
+        // Calculate total break time
+        function calculateTotalTime() {
+            const timeInField = document.getElementById('timeIn').value;
+            const timeOutField = document.getElementById('timeOut').value;
+
+            if (timeInField && timeOutField) {
+                const timeIn = parseTime(timeInField);
+                const timeOut = parseTime(timeOutField);
+
+                if (timeIn && timeOut) {
+                    const diff = (timeOut - timeIn) / 60000; // Difference in minutes
+                    const hours = Math.floor(diff / 60);
+                    const minutes = Math.round(diff % 60);
+                    document.getElementById('totalTime').value = `${hours}h ${minutes}m`;
+                }
+            }
+        }
+
+        // Parse time in HH:MM:SS format
+        function parseTime(timeString) {
+            const [hours, minutes, seconds] = timeString.split(':').map(Number);
+            const now = new Date();
+            now.setHours(hours, minutes, seconds || 0);
+            return now;
+        }
     </script>
 </body>
 </html>
