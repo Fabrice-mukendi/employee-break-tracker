@@ -120,7 +120,7 @@
             <tr>
                 <td>Employee Name</td>
                 <td>
-                    <select id="employeeName" name="employeeName" required>
+                    <select id="employeeName" name="employeeName" onchange="toggleNewEmployeeField()" required>
                         <option value="" disabled selected>Select Employee</option>
                         <option value="Patrick Noel">Patrick Noel</option>
                         <option value="Pierre Clerveaux">Pierre Clerveaux</option>
@@ -135,7 +135,9 @@
                         <option value="Synthiche">Synthiche</option>
                         <option value="Jean Kodia">Jean Kodia</option>
                         <option value="Christina">Christina</option>
+                        <option value="Other">Add New Employee</option>
                     </select>
+                    <input type="text" id="newEmployee" name="newEmployee" placeholder="Enter New Employee Name" style="display:none;" onblur="addNewEmployee()">
                 </td>
             </tr>
             <tr>
@@ -187,6 +189,33 @@
                 const minutes = String(now.getMinutes()).padStart(2, '0');
                 field.value = `${hours}:${minutes}`; // Auto-fill current time
                 calculateTotalTime();
+            }
+        }
+
+        // Show or hide the new employee input field
+        function toggleNewEmployeeField() {
+            const employeeSelect = document.getElementById('employeeName');
+            const newEmployeeField = document.getElementById('newEmployee');
+            if (employeeSelect.value === "Other") {
+                newEmployeeField.style.display = "block";
+                newEmployeeField.focus();
+            } else {
+                newEmployeeField.style.display = "none";
+            }
+        }
+
+        // Add a new employee to the dropdown list
+        function addNewEmployee() {
+            const newEmployeeField = document.getElementById('newEmployee');
+            const employeeSelect = document.getElementById('employeeName');
+            if (newEmployeeField.value.trim()) {
+                const newOption = document.createElement('option');
+                newOption.value = newEmployeeField.value.trim();
+                newOption.textContent = newEmployeeField.value.trim();
+                employeeSelect.insertBefore(newOption, employeeSelect.lastElementChild);
+                employeeSelect.value = newOption.value; // Select the newly added employee
+                newEmployeeField.value = "";
+                newEmployeeField.style.display = "none";
             }
         }
 
