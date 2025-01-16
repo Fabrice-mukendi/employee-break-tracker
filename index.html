@@ -174,10 +174,10 @@
 
                 if (timeDifference > 10) {
                     totalTimeField.classList.add('red-highlight');
-                    notesField.value = `Exceeded allowed time by ${timeDifference} minutes.`;
+                    notesField.value = `Exceeded allowed time by ${timeDifference} minutes. Total break was ${totalMinutes} minutes.`;
                 } else if (timeDifference > 0) {
                     totalTimeField.classList.add('yellow-highlight');
-                    notesField.value = `Break exceeded allowed time but within 10 minutes.`;
+                    notesField.value = `Break exceeded allowed time but within 10 minutes (exceeded by ${timeDifference} minutes). Total break was ${totalMinutes} minutes.`;
                 }
             }
         }
