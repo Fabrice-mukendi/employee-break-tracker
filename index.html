@@ -147,7 +147,7 @@
             </tr>
             <tr>
                 <td>Notes</td>
-                <td><textarea id="notes" name="notes" rows="3" placeholder="Notes will be generated here automatically"></textarea></td>
+                <td><textarea id="notes" name="notes" rows="3" readonly></textarea></td>
             </tr>
         </table>
         <br>
@@ -155,7 +155,7 @@
     </form>
 
     <script>
-        // Show dynamic date
+        // Show today's date dynamically
         document.getElementById('date').textContent = `Today's Date: ${new Date().toLocaleDateString('en-US', { 
             weekday: 'long', 
             year: 'numeric', 
@@ -163,46 +163,42 @@
             day: 'numeric' 
         })}`;
 
-        // Show input field if "Other" is selected
-        function showOtherField() {
-            const employeeSelect = document.getElementById('employeeName');
-            const otherField = document.getElementById('newEmployee');
-            if (employeeSelect.value === 'Other') {
-                otherField.style.display = 'block';
-                otherField.required = true;
-            } else {
-                otherField.style.display = 'none';
-                otherField.required = false;
-            }
-        }
-
-        // Automatically fill in time or allow manual entry
+        // Automatically fill the time when clicked and calculate total time
         function captureTime(fieldId) {
             const field = document.getElementById(fieldId);
             const now = new Date();
-            field.value = now.toLocaleTimeString(); // Always overwrite with the current time
+            field.value = now.toLocaleTimeString(); // Auto-fill current time
             calculateTotalTime();
         }
 
-        // Calculate total break time
+        // Calculate total break time and update notes
         function calculateTotalTime() {
-            const timeInField = document.getElementById('timeIn').value;
-            const timeOutField = document.getElementById('timeOut').value;
+            const timeInValue = document.getElementById('timeIn').value;
+            const timeOutValue = document.getElementById('timeOut').value;
 
-            if (timeInField && timeOutField) {
-                const timeIn = parseTime(timeInField);
-                const timeOut = parseTime(timeOutField);
+            if (timeInValue && timeOutValue) {
+                const timeIn = parseTime(timeInValue);
+                const timeOut = parseTime(timeOutValue);
 
                 if (timeIn && timeOut) {
-                    const diff = (timeOut - timeIn) / 60000; // Difference in minutes
-                    const hours = Math.floor(diff / 60);
-                    const minutes = Math.round(diff % 60);
+                    const diffMinutes = Math.round((timeOut - timeIn) / 60000); // Difference in minutes
+                    const hours = Math.floor(diffMinutes / 60);
+                    const minutes = diffMinutes % 60;
+
                     document.getElementById('totalTime').value = `${hours}h ${minutes}m`;
+
+                    // Generate a fun note
+                    const notesField = document.getElementById('notes');
+                    if (diffMinutes <= 30) {
+                        notesField.value = `Great job! You took a well-deserved break of ${hours} hours and ${minutes} minutes. You're setting an example!`;
+                    } else {
+                        notesField.value = `Oops! Your break lasted ${hours} hours and ${minutes} minutes. Remember, breaks should be refreshing but timely!`;
+                    }
                 }
             }
         }
 
-        // Parse time from HH:MM:SS format
+        // Parse time in HH:MM:SS format
         function parseTime(timeString) {
             const [hours, minutes, seconds] = timeString.split(':').map(Number);
             const now = new Date();
