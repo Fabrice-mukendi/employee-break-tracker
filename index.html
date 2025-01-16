@@ -84,6 +84,24 @@
         button:hover {
             background-color: #45a049;
         }
+
+        .green-highlight {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .yellow-highlight {
+            background-color: #fff3cd;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .red-highlight {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -102,7 +120,7 @@
             <tr>
                 <td>Employee Name</td>
                 <td>
-                    <select id="employeeName" name="employeeName" onchange="showOtherField()" required>
+                    <select id="employeeName" name="employeeName" required>
                         <option value="" disabled selected>Select Employee</option>
                         <option value="Patrick Noel">Patrick Noel</option>
                         <option value="Pierre Clerveaux">Pierre Clerveaux</option>
@@ -117,37 +135,31 @@
                         <option value="Synthiche">Synthiche</option>
                         <option value="Jean Kodia">Jean Kodia</option>
                         <option value="Christina">Christina</option>
-                        <option value="Other">Other</option>
                     </select>
-                    <input type="text" id="newEmployee" name="newEmployee" placeholder="Enter New Employee Name" style="display:none;">
                 </td>
             </tr>
             <tr>
                 <td>Type of Break</td>
                 <td>
-                    <select id="breakType" name="breakType" required>
+                    <select id="breakType" name="breakType" onchange="calculateTotalTime()" required>
                         <option value="" disabled selected>Select Break Type</option>
-                        <option value="Lunch Break (30 minutes)">Lunch Break (30 minutes)</option>
-                        <option value="Bathroom Break (15 minutes)">Bathroom Break (15 minutes)</option>
-                        <option value="Exceptional Break">Exceptional Break</option>
+                        <option value="Lunch Break (30 minutes)" data-duration="30">Lunch Break (30 minutes)</option>
+                        <option value="Bathroom Break (15 minutes)" data-duration="15">Bathroom Break (15 minutes)</option>
+                        <option value="Exceptional Break" data-duration="0">Exceptional Break</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td>Break Start (Time In)</td>
-                <td><input type="text" id="timeIn" name="timeIn" onclick="captureTime('timeIn')" placeholder="Click to auto-fill or manually enter time"></td>
+                <td><input type="time" id="timeIn" name="timeIn" onchange="calculateTotalTime()"></td>
             </tr>
             <tr>
                 <td>Break End (Time Out)</td>
-                <td><input type="text" id="timeOut" name="timeOut" onclick="captureTime('timeOut')" placeholder="Click to auto-fill or manually enter time"></td>
+                <td><input type="time" id="timeOut" name="timeOut" onchange="calculateTotalTime()"></td>
             </tr>
             <tr>
                 <td>Total Break Time</td>
                 <td><input type="text" id="totalTime" name="totalTime" readonly></td>
-            </tr>
-            <tr>
-                <td>Notes</td>
-                <td><textarea id="notes" name="notes" rows="3" readonly></textarea></td>
             </tr>
         </table>
         <br>
@@ -163,48 +175,45 @@
             day: 'numeric' 
         })}`;
 
-        // Automatically fill the time only on the first click
-        function captureTime(fieldId) {
-            const field = document.getElementById(fieldId);
-            if (!field.value) {
-                const now = new Date();
-                field.value = now.toLocaleTimeString(); // Auto-fill current time
-                calculateTotalTime();
-            }
-        }
-
-        // Calculate total break time and generate notes
+        // Automatically calculate the total break time and highlight the result
         function calculateTotalTime() {
             const timeInValue = document.getElementById('timeIn').value;
             const timeOutValue = document.getElementById('timeOut').value;
+            const breakType = document.getElementById('breakType');
+            const totalTimeField = document.getElementById('totalTime');
+
+            // Reset field style
+            totalTimeField.classList.remove('green-highlight', 'yellow-highlight', 'red-highlight');
 
             if (timeInValue && timeOutValue) {
                 const timeIn = parseTime(timeInValue);
                 const timeOut = parseTime(timeOutValue);
 
-                if (timeIn && timeOut) {
+                if (timeIn && timeOut && timeOut > timeIn) {
                     const diffMinutes = Math.round((timeOut - timeIn) / 60000); // Difference in minutes
-                    const hours = Math.floor(diffMinutes / 60);
-                    const minutes = diffMinutes % 60;
+                    const allowedTime = parseInt(breakType.options[breakType.selectedIndex].getAttribute('data-duration')) || 0;
 
-                    document.getElementById('totalTime').value = `${hours}h ${minutes}m`;
+                    totalTimeField.value = `${Math.floor(diffMinutes / 60)}h ${diffMinutes % 60}m`;
 
-                    // Generate a fun and beautiful note
-                    const notesField = document.getElementById('notes');
-                    if (diffMinutes <= 30) {
-                        notesField.value = `Fantastic! Your break lasted ${hours}h ${minutes}m. You're setting the gold standard for break discipline!`;
+                    // Apply color coding based on allowed time
+                    if (diffMinutes <= allowedTime) {
+                        totalTimeField.classList.add('green-highlight'); // Within allowed time
+                    } else if (diffMinutes <= allowedTime + 10) {
+                        totalTimeField.classList.add('yellow-highlight'); // Exceeds allowed time by <10 minutes
                     } else {
-                        notesField.value = `Uh-oh! Your break was ${hours}h ${minutes}m. Let's not turn breaks into vacations! Back to productivity!`;
+                        totalTimeField.classList.add('red-highlight'); // Exceeds allowed time by >=10 minutes
                     }
+                } else {
+                    totalTimeField.value = "Invalid Time Range";
                 }
             }
         }
 
-        // Parse time in HH:MM:SS format
+        // Parse time in HH:MM format
         function parseTime(timeString) {
-            const [hours, minutes, seconds] = timeString.split(':').map(Number);
+            const [hours, minutes] = timeString.split(':').map(Number);
             const now = new Date();
-            now.setHours(hours, minutes, seconds || 0);
+            now.setHours(hours, minutes, 0, 0);
             return now;
         }
     </script>
