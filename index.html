@@ -155,7 +155,7 @@
     </form>
 
     <script>
-        // Show the current date
+        // Show dynamic date
         document.getElementById('date').textContent = `Today's Date: ${new Date().toLocaleDateString('en-US', { 
             weekday: 'long', 
             year: 'numeric', 
@@ -163,7 +163,7 @@
             day: 'numeric' 
         })}`;
 
-        // Show the "Other" input field if selected
+        // Show input field if "Other" is selected
         function showOtherField() {
             const employeeSelect = document.getElementById('employeeName');
             const otherField = document.getElementById('newEmployee');
@@ -176,12 +176,12 @@
             }
         }
 
-        // Automatically fill in time and reset old values
+        // Automatically fill in time or allow manual entry
         function captureTime(fieldId) {
             const field = document.getElementById(fieldId);
             const now = new Date();
-            field.value = now.toLocaleTimeString(); // Always overwrite with the new current time
-            calculateTotalTime(); // Update the total break time
+            field.value = now.toLocaleTimeString(); // Always overwrite with the current time
+            calculateTotalTime();
         }
 
         // Calculate total break time
@@ -202,7 +202,7 @@
             }
         }
 
-        // Parse time in HH:MM:SS format
+        // Parse time from HH:MM:SS format
         function parseTime(timeString) {
             const [hours, minutes, seconds] = timeString.split(':').map(Number);
             const now = new Date();
